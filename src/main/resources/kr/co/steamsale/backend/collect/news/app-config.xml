@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<params>		
+		<syncMultiThread>false</syncMultiThread>
+		<waitCount>1000</waitCount>
+		<maxThreadCount>10</maxThreadCount>
+		<processCountPerThread>1</processCountPerThread>
+		<waitTime>1000</waitTime>		
+		<handlerClassName>com.prismweaver.pcss.danawa.catalog.ErrorHandler</handlerClassName>
+	</params>
+	
+	<dataSource>
+		<driver>com.mysql.jdbc.Driver</driver>
+		<jdbcUrl>{db_conn}</jdbcUrl>
+		<username>{username}</username>
+		<password>{password}</password>
+		<poolMaximumActiveConnections>30</poolMaximumActiveConnections>
+		<poolMaximumIdleConnections>10</poolMaximumIdleConnections>
+	</dataSource>
+</config>

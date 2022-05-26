@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="CollectMapper">
+	<update id="upsertApp" statementType="CALLABLE" parameterType="java.util.HashMap">
+	{
+		call SP_SS_UPS_APP
+		(
+			#{appId, mode=IN, jdbcType=INTEGER},
+			#{name, mode=IN, jdbcType=VARCHAR},
+			#{oprt, mode=IN, jdbcType=VARCHAR}
+		)
+	}
+	</update>
+	
+	<select id="selectAppList" resultType="kr.co.steamsale.backend.data.App" parameterType="java.util.HashMap">
+		SELECT 	`APP_ID` appId,
+			    `NAME` name,
+			    `TYPE` type,
+			    `REQUIRED_AGE` requiredAge,
+			    `ABOUT_THE_GAME` aboutTheGame,
+			    `SUPPORTED_LANGUAGES` supportedLanguages,
+			    `HEADER_IMAGE` headerImage,
+			    `WEBSITE` website,
+			    `PC_REQ_MIN` pcReqMin,
+			    `PC_REQ_REC` pcReqRec,
+			    `MAC_REQ_MIN` macReqMin,
+			    `MAC_REQ_REC` macReqRec,
+			    `LINUX_REQ_MIN` linuxReqMin,
+			    `LINUX_REQ_REC` linuxReqRec,
+			    `DEVELOPERS` developers,
+			    `PUBLISHERS` publishers,
+			    `LINUX_PLATFORM` linuxPlatform,
+			    `MAC_PLATFORM` macPlatform,
+			    `WINDOWS_PLATFORM` windowsPlatform,
+			    `META_SCORE` metaScore,
+			    `META_URL` metaUrl,
+			    `RECOMMENDATIONS` recommendations,
+			    `COMING_SOON` commingSoon,
+			    `RELEASE_DATE` releaseDate,
+			    `IS_FREE` isFree
+		FROM 	`app`
+		<where> 
+		    <if test="appId != null" >
+		         `APP_ID` = #{appId}
+		    </if> 
+		</where>
+		<where> 
+		    <if test="type != null" >
+				`TYPE` IN
+				<foreach item="item" index="index" collection="type" open="(" separator="," close=")">
+			        #{item}
+				</foreach>
+		    </if> 
+		</where>
+		;
+	</select>
+	
+	<select id="selectApp" resultType="kr.co.steamsale.backend.data.App" parameterType="java.util.HashMap">
+
+		SELECT 	`APP_ID` appId,
+			    `NAME` name,
+			    `TYPE` type,
+			    `REQUIRED_AGE` requiredAge,
+			    `ABOUT_THE_GAME` aboutTheGame,
+			    `SUPPORTED_LANGUAGES` supportedLanguages,
+			    `HEADER_IMAGE` headerImage,
+			    `WEBSITE` website,
+			    `PC_REQ_MIN` pcReqMin,
+			    `PC_REQ_REC` pcReqRec,
+			    `MAC_REQ_MIN` macReqMin,
+			    `MAC_REQ_REC` macReqRec,
+			    `LINUX_REQ_MIN` linuxReqMin,
+			    `LINUX_REQ_REC` linuxReqRec,
+			    `DEVELOPERS` developers,
+			    `PUBLISHERS` publishers,
+			    `LINUX_PLATFORM` linuxPlatform,
+			    `MAC_PLATFORM` macPlatform,
+			    `WINDOWS_PLATFORM` windowsPlatform,
+			    `META_SCORE` metaScore,
+			    `META_URL` metaUrl,
+			    `RECOMMENDATIONS` recommendations,
+			    `COMING_SOON` commingSoon,
+			    `RELEASE_DATE` releaseDate,
+			    `IS_FREE` isFree
+		FROM 	`app`
+		WHERE	`APP_ID` = #{appId}
+
+	</select>
+	
+	<update id="updateAppInfo" parameterType="java.util.HashMap">
+	<![CDATA[
+		UPDATE	APP
+		SET		`TYPE` = #{data.type},
+				`REQUIRED_AGE` = #{data.requiredAge},
+				`ABOUT_THE_GAME` = #{data.aboutTheGame},
+				`SUPPORTED_LANGUAGES` = #{data.supportedLanguages},
+				`HEADER_IMAGE` = #{data.headerImage},
+				`WEBSITE` = #{data.website},
+				`PC_REQ_MIN` = #{data.pcReqMin},
+				`PC_REQ_REC` = #{data.pcReqRec},
+				`MAC_REQ_MIN` = #{data.macReqMin},
+				`MAC_REQ_REC` = #{data.macReqRec},
+				`LINUX_REQ_MIN` = #{data.linuxReqMin},
+				`LINUX_REQ_REC` = #{data.linuxReqRec},
+				`DEVELOPERS` = #{data.developers},
+				`PUBLISHERS` = #{data.publishers},
+				`LINUX_PLATFORM` = #{data.platform.linux},
+				`MAC_PLATFORM` = #{data.platform.mac},
+				`WINDOWS_PLATFORM` = #{data.platform.windows},
+				`META_SCORE` = #{data.metacritic.metaScore},
+				`META_URL` = #{data.metacritic.metaUrl},
+				`RECOMMENDATIONS` = #{data.recommendations},
+				`COMING_SOON` = #{data.releaseDate.comingSoon},
+				`RELEASE_DATE` = #{data.releaseDate.releaseDate},
+				`IS_FREE` = #{data.isFree},
+				`UPD_DATE` = now(),
+				`UPD_OPRT` = #{oprt}
+		WHERE	`APP_ID` = #{data.appId}
+	]]>
+	</update>
+	
+	<update id="upsertPriceInfo" statementType="CALLABLE" parameterType="java.util.HashMap">
+	{
+		call SP_SS_UPS_PRICE
+		(
+			#{id, mode=IN, jdbcType=INTEGER},
+			#{currency, mode=IN, jdbcType=VARCHAR},
+			#{initialPrice, mode=IN, jdbcType=DECIMAL},
+			#{finalPrice, mode=IN, jdbcType=DECIMAL},
+			#{discountPercent, mode=IN, jdbcType=DECIMAL},
+			#{oprt, mode=IN, jdbcType=VARCHAR}
+		)
+	}
+	</update>
+	
+	<select id="selectPriceList" resultType="kr.co.steamsale.backend.data.Price" parameterType="java.util.HashMap">
+		SELECT 	`ID` id,
+			    `CURRENCY` currency,
+			    `INITIAL_PRICE` initialPrice,
+			    `FINAL_PRICE` finalPrice,
+			    `DISCOUNT_PERCENT` discountPercent
+		FROM 	`price`
+		<where> 
+		    <if test="id != null" >
+		         `ID` = #{id}
+		    </if> 
+		</where>
+		;
+	</select>
+	
+	<select id="selectCategory" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+		SELECT  COUNT(*) CNT
+		FROM	`category`
+		WHERE	`CATEGORY_ID` = #{categoryId}
+		;
+	</select>
+	
+	<insert id="insertCategory" parameterType="java.util.HashMap">
+		INSERT INTO `category`
+		(
+			`CATEGORY_ID`,
+			`DESCRIPTION`,
+			`INS_OPRT`
+		)
+		VALUES
+		(
+			#{categoryId},
+			#{description},
+			#{oprt}
+		);
+	</insert>
+	
+	<delete id="deleteAppCategory" parameterType="java.util.HashMap">
+		DELETE
+		FROM	`app_category`
+		WHERE	`APP_ID` = #{appId}
+		;
+	</delete>
+	
+	<insert id="insertAppCategory" parameterType="java.util.HashMap">
+		INSERT INTO `app_category`
+		(
+			`APP_ID`,
+			`CATEGORY_ID`,
+			`INS_OPRT`
+		)
+		VALUES
+		(
+			#{appId},
+			#{categoryId},
+			#{oprt}
+		);
+	</insert>
+	
+	<select id="selectGenre" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+		SELECT  COUNT(*) CNT
+		FROM	`genre`
+		WHERE	`GENRE_ID` = #{genreId}
+		;
+	</select>
+	
+	<insert id="insertGenre" parameterType="java.util.HashMap">
+		INSERT INTO `genre`
+		(
+			`GENRE_ID`,
+			`DESCRIPTION`,
+			`INS_OPRT`
+		)
+		VALUES
+		(
+			#{genreId},
+			#{description},
+			#{oprt}
+		);
+	</insert>
+	
+	<delete id="deleteAppGenre" parameterType="java.util.HashMap">
+		DELETE
+		FROM	`app_genre`
+		WHERE	`APP_ID` = #{appId}
+		;
+	</delete>
+	
+	<insert id="insertAppGenre" parameterType="java.util.HashMap">
+		INSERT INTO `app_genre`
+		(
+			`APP_ID`,
+			`GENRE_ID`,
+			`INS_OPRT`
+		)
+		VALUES
+		(
+			#{appId},
+			#{genreId},
+			#{oprt}
+		);
+	</insert>
+	
+	<select id="selectAppWlist" parameterType="java.util.HashMap" resultType="kr.co.steamsale.backend.data.AppWlist">
+		SELECT	`SYNC_ID` syncId, 
+				`APP_ID` appId,
+				`STATUS` status
+		FROM 	`app_wlist`
+		WHERE 	`STATUS` = 'W'
+		ORDER BY SYNC_ID
+		LIMIT 	0, #{selectCount}
+	</select>	
+	
+	<insert id="insertAppWlist" parameterType="java.util.HashMap">
+		INSERT INTO `app_wlist`
+		(
+			`APP_ID`,
+			`STATUS`,
+			`INS_OPRT`
+		)
+		VALUES
+		(
+			#{appId},
+			#{status},
+			#{oprt}
+		);
+	</insert>
+	
+	<update id="updateAppWlistStatus" parameterType="java.util.HashMap">
+		UPDATE	`app_wlist`
+		SET		STATUS = #{status},
+				UPD_DATE = now(),
+				UPD_OPRT = #{oprt}
+		WHERE	SYNC_ID = #{syncId}
+		AND 	STATUS = #{preStatus}
+	</update>
+	
+	<insert id="insertAppSaleList" parameterType="java.util.HashMap">
+		INSERT INTO `app_sale`
+		(
+			`EXEC_DATE`,
+			`EXEC_TIME`,
+			`PACKAGE_ID`,
+			`APP_ID`,
+			`INS_OPRT`
+		)
+		VALUES
+		(
+			#{execDate},
+			#{execTime},
+			#{packageId},
+			#{appId},
+			#{oprt}
+		);
+	</insert>
+	
+	<update id="updateAppReviewCount" parameterType="java.util.HashMap">
+		UPDATE	`APP`
+		SET		`POSITIVE` = #{positive},
+				`NEGATIVE` = #{negative},
+				`UPD_DATE` = now(),
+				`UPD_OPRT` = #{oprt}
+		WHERE	`APP_ID` = #{id}
+		;
+	</update>
+	
+	<select id="selectAppDetailWlist" parameterType="java.util.HashMap" resultType="kr.co.steamsale.backend.data.AppDetailWlist">
+		SELECT	`SYNC_ID` syncId, 
+				`APP_ID` appId,
+				`STATUS` status
+		FROM 	`app_detail_wlist`
+		WHERE 	`STATUS` = 'W'
+		ORDER BY SYNC_ID
+		LIMIT 	0, #{selectCount}
+	</select>	
+	
+	<delete id="deleteAppPackageInfo" parameterType="java.util.HashMap">
+		DELETE
+		FROM	`app_package`
+		WHERE	`APP_ID` = #{appId}
+		;
+	</delete>
+	
+	<insert id="insertAppPackageInfo" parameterType="java.util.HashMap">
+		INSERT INTO `app_package`
+		(
+			`APP_ID`,
+			`PACKAGE_ID`,
+			`INS_OPRT`
+		)
+		VALUES
+		(
+			#{appId},
+			#{packageId},
+			#{oprt}
+		);
+	</insert>
+	
+	<select id="selectPackageList" resultType="kr.co.steamsale.backend.data.Sub" parameterType="java.util.HashMap">
+		SELECT	`PACKAGE_ID` packageId
+		FROM	`APP_PACKAGE`
+		<where> 
+		    <if test="packageId != null" >
+		         `PACKAGE_ID` = #{packageId}
+		    </if> 
+		</where>
+		GROUP BY `PACKAGE_ID`
+		;
+	</select>
+	
+	<update id="upsertPackageInfo" statementType="CALLABLE" parameterType="java.util.HashMap">
+	{
+		call SP_SS_UPS_PACKAGE
+		(
+			#{data.packageId, mode=IN, jdbcType=INTEGER},
+			#{data.name, mode=IN, jdbcType=VARCHAR},
+			#{data.pageImage, mode=IN, jdbcType=VARCHAR},
+			#{data.headerImage, mode=IN, jdbcType=VARCHAR},
+			#{data.smallLogo, mode=IN, jdbcType=VARCHAR},
+			
+			#{data.price.currency, mode=IN, jdbcType=VARCHAR},
+			#{data.price.initialPrice, mode=IN, jdbcType=DECIMAL},
+			#{data.price.finalPrice, mode=IN, jdbcType=DECIMAL},
+			#{data.price.discountPercent, mode=IN, jdbcType=DECIMAL},
+			#{data.price.individualPrice, mode=IN, jdbcType=DECIMAL},
+			
+			#{data.platform.linux, mode=IN, jdbcType=BIT},
+			#{data.platform.mac, mode=IN, jdbcType=BIT},
+			#{data.platform.windows, mode=IN, jdbcType=BIT},
+			
+			#{data.releaseDate.comingSoon, mode=IN, jdbcType=BIT},			
+			#{data.releaseDate.releaseDate, mode=IN, jdbcType=VARCHAR},
+			
+			#{oprt, mode=IN, jdbcType=VARCHAR}
+		)
+	}
+	</update>
+	
+	<select id="selectSaleWlist" resultType="kr.co.steamsale.backend.data.SaleWlist" parameterType="java.util.HashMap">
+	
+	SELECT	*
+	FROM
+	(
+		SELECT	'app' type, ID id
+		FROM	PRICE
+		WHERE	DISCOUNT_PERCENT > 0
+		
+		UNION 
+		
+		SELECT	'sub' type, PACKAGE_ID id
+		FROM	PACKAGE
+		WHERE	DISCOUNT_PERCENT > 0
+		
+		UNION 
+
+		SELECT	type, id
+		FROM 	SALE
+	) X
+	<where> 
+	    <if test="id != null" >
+	         X.id = #{id}
+	    </if> 
+	</where>
+		;
+
+	</select>	
+	
+	<update id="upsertSaleInfo" statementType="CALLABLE" parameterType="java.util.HashMap">
+	{
+		call SP_SS_UPS_SALE
+		(
+			#{sale.type, mode=IN, jdbcType=VARCHAR},
+			#{sale.id, mode=IN, jdbcType=INTEGER},
+			#{sale.title, mode=IN, jdbcType=VARCHAR},
+			#{sale.endDate, mode=IN, jdbcType=TIMESTAMP},
+			#{oprt, mode=IN, jdbcType=VARCHAR}
+		)
+	}
+	</update>
+	
+	<delete id="deleteSaleInfo" parameterType="java.util.HashMap">
+		DELETE
+		FROM	`SALE`
+		WHERE	`TYPE` = #{type}
+		AND		`ID` = #{id}
+		;
+	</delete>
+	
+	
+	<update id="upsertFranchiseInfo" statementType="CALLABLE" parameterType="java.util.HashMap">
+	{
+		call SP_SS_UPS_FRANCHISE
+		(
+			#{franchise.saleId, mode=IN, jdbcType=VARCHAR},
+			#{oprt, mode=IN, jdbcType=VARCHAR}
+		)
+	}
+	</update>
+	
+	<select id="selectFranchiseWlist" resultType="kr.co.steamsale.backend.data.Franchise" parameterType="java.util.HashMap">
+		SELECT	`SALE_ID` saleId
+		FROM	FRANCHISE
+		;
+	</select>	
+	
+	<delete id="deleteFranchiseDetailInfo" parameterType="java.util.HashMap">
+		DELETE
+		FROM	`franchise_child`
+		WHERE	`SALE_ID` = #{saleId}
+		;
+	</delete>
+	
+	<update id="insertFranchiseInfo" parameterType="java.util.HashMap">
+	UPDATE	`franchise`
+	SET		`SALE_NAME` = #{franchise.saleName},
+			`AVAILABLE`	= #{franchise.available},
+			`UPD_DATE` = now(),
+			`UPD_OPRT` = #{oprt}
+	WHERE 	`SALE_ID` = #{franchise.saleId}
+	;
+	</update>
+	
+	<insert id="insertFranchiseDetailInfo" parameterType="java.util.HashMap">
+	INSERT INTO `franchise_child`
+	(
+		`SALE_ID`,
+		`ID`,
+		`NAME`,
+		`TYPE`,
+		`INS_OPRT`
+	)
+	VALUES
+	(
+		#{franchise.saleId},
+		#{franchise.franchiseChild.id},
+		#{franchise.franchiseChild.name},
+		#{franchise.franchiseChild.type},
+		#{oprt}
+	);
+	
+	</insert>
+	
+	<select id="selectSubPriceList" resultType="kr.co.steamsale.backend.data.Price" parameterType="java.util.HashMap">
+		SELECT 	`PACKAGE_ID` id,
+			    `CURRENCY` currency,
+			    `INITIAL_PRICE` initialPrice,
+			    `FINAL_PRICE` finalPrice,
+			    `DISCOUNT_PERCENT` discountPercent
+		FROM 	`package`
+		<where> 
+		    <if test="id != null" >
+		         `PACKAGE_ID` = #{id}
+		    </if> 
+		</where>
+		;
+	</select>
+	
+	<update id="updateAppDescription" parameterType="java.util.HashMap">
+		UPDATE	`APP`
+		SET		`DESCRIPTION` = #{description}
+		WHERE	`APP_ID` = #{id}
+		;
+	</update>
+</mapper>

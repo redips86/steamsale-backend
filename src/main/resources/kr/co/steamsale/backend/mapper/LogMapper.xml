@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="LogMapper">
+	<insert id="insertPriceLog" parameterType="java.util.HashMap">
+		INSERT INTO `price_log`
+		(
+			`EXEC_DATE`,
+			`EXEC_TIME`,
+			`ID`,
+			`USD`,
+			`KRW`,
+			`INS_OPRT`
+		)
+		VALUES
+		(
+			#{execDate},
+			#{execTime},
+			#{id},
+			#{usd},
+			#{krw},
+			#{oprt}
+		);
+	</insert>
+	
+	<insert id="insertPlayerLog" parameterType="java.util.HashMap">
+		INSERT INTO `player_log`
+		(
+			`EXEC_DATE`,
+			`EXEC_TIME`,
+			`ID`,
+			`PLAYER_COUNT`,
+			`INS_OPRT`
+		)
+		VALUES
+		(
+			#{execDate},
+			#{execTime},
+			#{id},
+			#{playerCount},
+			#{oprt}
+		);
+	</insert>
+	
+	<insert id="insertSubPriceLog" parameterType="java.util.HashMap">
+		INSERT INTO `package_price_log`
+		(
+			`EXEC_DATE`,
+			`EXEC_TIME`,
+			`ID`,
+			`USD`,
+			`KRW`,
+			`INS_OPRT`
+		)
+		VALUES
+		(
+			#{execDate},
+			#{execTime},
+			#{id},
+			#{usd},
+			#{krw},
+			#{oprt}
+		);
+	</insert>
+</mapper>

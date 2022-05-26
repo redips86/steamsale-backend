@@ -1,0 +1,549 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>kr.co.steamsale</groupId>
+  <artifactId>backend</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>backend</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+	  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+	  <!-- Prismservice 서버 config -->
+	  <prism.deploy.server.id></prism.deploy.server.id>
+	  <prism.deploy.remote.dir>/home/prismfile/steamsale_deploy</prism.deploy.remote.dir>
+	  <prism.deploy.user.id></prism.deploy.user.id>
+	  <prism.deploy.user.password></prism.deploy.user.password>
+	  <prism.deploy.source.dir>${project.build.directory}\STEAMSALE_Deploy\prismserver</prism.deploy.source.dir>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.json</groupId>
+    	<artifactId>json</artifactId>
+    	<version>20141113</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.httpcomponents</groupId>
+    	<artifactId>httpclient</artifactId>
+    	<version>4.4.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.httpcomponents</groupId>
+    	<artifactId>httpcore</artifactId>
+    	<version>4.4.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>commons-codec</groupId>
+    	<artifactId>commons-codec</artifactId>
+    	<version>1.6</version>
+    </dependency>
+    <dependency>
+    	<groupId>commons-logging</groupId>
+    	<artifactId>commons-logging</artifactId>
+    	<version>1.2</version>
+    </dependency>
+    <dependency>
+    	<groupId>commons-lang</groupId>
+    	<artifactId>commons-lang</artifactId>
+    	<version>2.6</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.slf4j</groupId>
+    	<artifactId>slf4j-log4j12</artifactId>
+    	<version>1.7.12</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.slf4j</groupId>
+    	<artifactId>slf4j-jdk14</artifactId>
+    	<version>1.7.12</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.prismweaver.backend</groupId>
+    	<artifactId>backendframework</artifactId>
+    	<version>1.0</version>
+    </dependency>
+    <dependency>
+    	<groupId>mysql</groupId>
+    	<artifactId>mysql-connector-java</artifactId>
+    	<version>5.1.35</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.mybatis</groupId>
+    	<artifactId>mybatis</artifactId>
+    	<version>3.3.0</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.github.koraktor</groupId>
+    	<artifactId>steam-condenser</artifactId>
+    	<version>1.3.9</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.jsoup</groupId>
+    	<artifactId>jsoup</artifactId>
+    	<version>1.8.2</version>
+    </dependency>
+    <dependency>
+    	<groupId>commons-io</groupId>
+    	<artifactId>commons-io</artifactId>
+    	<version>2.4</version>
+    </dependency>
+  </dependencies>
+  
+  <build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>[1.0.0,)</versionRange>
+										<goals>
+											<goal>copy-dependencies</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<configuration>
+					<tasks>
+						<echo>Make Directory : "${prism.deploy.server.id}:${prism.deploy.remote.dir}"</echo>
+						<ftp passive="yes" action="mkdir" server="${prism.deploy.server.id}" remotedir="${prism.deploy.remote.dir}"
+							userid="${prism.deploy.user.id}" password="${prism.deploy.user.password}"
+							depends="yes" verbose="no" chmod="777">
+						</ftp>
+						<echo>Start Deployment!! ==> "${prism.deploy.server.id}"</echo>
+						<ftp passive="yes" server="${prism.deploy.server.id}" remotedir="${prism.deploy.remote.dir}"
+							userid="${prism.deploy.user.id}" password="${prism.deploy.user.password}">
+							<fileset dir="${prism.deploy.source.dir}" />
+						</ftp>
+					</tasks>
+				</configuration>
+				<executions>
+					<execution>
+						<id>ftp</id>
+						<phase>install</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>ant</groupId>
+						<artifactId>ant-commons-net</artifactId>
+						<version>1.6.5</version>
+					</dependency>
+					<dependency>
+						<groupId>commons-net</groupId>
+						<artifactId>commons-net</artifactId>
+						<version>1.4.1</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>false</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<!-- =============================================================== -->
+					<!-- 기본 패키지는 jar로 만들지 않는다.============================================= -->
+					<!-- =============================================================== -->
+					<execution>
+						<id>default-jar</id>
+						<phase>none</phase>
+					</execution>
+
+					<!-- =============================================================== -->
+					<!-- ApplistCollector =============================================== -->
+					<!-- =============================================================== -->
+					<execution>
+						<id>ApplistCollector</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<finalName>ApplistCollector</finalName>
+							<archive>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<classpathPrefix>./lib/</classpathPrefix>
+									<mainClass>
+										kr.co.steamsale.backend.collect.applist.ApplistCollector
+									</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Class-Path>./</Class-Path>
+								</manifestEntries>
+							</archive>
+							<excludes>
+								<exclude>**/app-config.xml</exclude>
+								<exclude>**/log4j.xml</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+					<!-- =============================================================== -->
+					<!-- AppWlistCollector ============================================== -->
+					<!-- =============================================================== -->
+					<execution>
+						<id>AppWlistCollector</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<finalName>AppWlistCollector</finalName>
+							<archive>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<classpathPrefix>./lib/</classpathPrefix>
+									<mainClass>
+										kr.co.steamsale.backend.collect.appwlist.AppWlistCollector
+									</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Class-Path>./</Class-Path>
+								</manifestEntries>
+							</archive>
+							<excludes>
+								<exclude>**/app-config.xml</exclude>
+								<exclude>**/log4j.xml</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+					<!-- =============================================================== -->
+					<!-- AppinfoCollector ============================================== -->
+					<!-- =============================================================== -->
+					<execution>
+						<id>AppinfoCollector</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<finalName>AppinfoCollector</finalName>
+							<archive>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<classpathPrefix>./lib/</classpathPrefix>
+									<mainClass>
+										kr.co.steamsale.backend.collect.appinfo.AppinfoCollector
+									</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Class-Path>./</Class-Path>
+								</manifestEntries>
+							</archive>
+							<excludes>
+								<exclude>**/app-config.xml</exclude>
+								<exclude>**/log4j.xml</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+					<!-- =============================================================== -->
+					<!-- SaleCollector ============================================== -->
+					<!-- =============================================================== -->
+					<execution>
+						<id>SaleCollector</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<finalName>SaleCollector</finalName>
+							<archive>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<classpathPrefix>./lib/</classpathPrefix>
+									<mainClass>
+										kr.co.steamsale.backend.collect.sale.SaleCollector
+									</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Class-Path>./</Class-Path>
+								</manifestEntries>
+							</archive>
+							<excludes>
+								<exclude>**/app-config.xml</exclude>
+								<exclude>**/log4j.xml</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+					<!-- =============================================================== -->
+					<!-- ReviewCollector ============================================== -->
+					<!-- =============================================================== -->
+					<execution>
+						<id>ReviewCollector</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<finalName>ReviewCollector</finalName>
+							<archive>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<classpathPrefix>./lib/</classpathPrefix>
+									<mainClass>
+										kr.co.steamsale.backend.collect.review.ReviewCollector
+									</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Class-Path>./</Class-Path>
+								</manifestEntries>
+							</archive>
+							<excludes>
+								<exclude>**/app-config.xml</exclude>
+								<exclude>**/log4j.xml</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+					
+					<!-- =============================================================== -->
+					<!-- PlayerLogger ============================================== -->
+					<!-- =============================================================== -->
+					<execution>
+						<id>PlayerLogger</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<finalName>PlayerLogger</finalName>
+							<archive>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<classpathPrefix>./lib/</classpathPrefix>
+									<mainClass>
+										kr.co.steamsale.backend.log.player.PlayerLogger
+									</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Class-Path>./</Class-Path>
+								</manifestEntries>
+							</archive>
+							<excludes>
+								<exclude>**/app-config.xml</exclude>
+								<exclude>**/log4j.xml</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+					<!-- =============================================================== -->
+					<!-- PriceLogger ============================================== -->
+					<!-- =============================================================== -->
+					<execution>
+						<id>PriceLogger</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<finalName>PriceLogger</finalName>
+							<archive>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<classpathPrefix>./lib/</classpathPrefix>
+									<mainClass>
+										kr.co.steamsale.backend.log.price.PriceLogger
+									</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Class-Path>./</Class-Path>
+								</manifestEntries>
+							</archive>
+							<excludes>
+								<exclude>**/app-config.xml</exclude>
+								<exclude>**/log4j.xml</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+					<!-- =============================================================== -->
+					<!-- SubCollector ============================================== -->
+					<!-- =============================================================== -->
+					<execution>
+						<id>SubCollector</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<finalName>SubCollector</finalName>
+							<archive>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<classpathPrefix>./lib/</classpathPrefix>
+									<mainClass>
+										kr.co.steamsale.backend.collect.sub.SubCollector
+									</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Class-Path>./</Class-Path>
+								</manifestEntries>
+							</archive>
+							<excludes>
+								<exclude>**/app-config.xml</exclude>
+								<exclude>**/log4j.xml</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+					<!-- =============================================================== -->
+					<!-- PriorCollector  ============================================== -->
+					<!-- =============================================================== -->
+					<execution>
+						<id>PriorCollector</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<finalName>PriorCollector</finalName>
+							<archive>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<classpathPrefix>./lib/</classpathPrefix>
+									<mainClass>
+										kr.co.steamsale.backend.collect.prior.PriorCollector
+									</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Class-Path>./</Class-Path>
+								</manifestEntries>
+							</archive>
+							<excludes>
+								<exclude>**/app-config.xml</exclude>
+								<exclude>**/log4j.xml</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+					<!-- =============================================================== -->
+					<!-- FranchiseCollector  ============================================== -->
+					<!-- =============================================================== -->
+					<execution>
+						<id>FranchiseCollector</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<finalName>FranchiseCollector</finalName>
+							<archive>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<classpathPrefix>./lib/</classpathPrefix>
+									<mainClass>
+										kr.co.steamsale.backend.collect.franchise.FranchiseCollector
+									</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Class-Path>./</Class-Path>
+								</manifestEntries>
+							</archive>
+							<excludes>
+								<exclude>**/app-config.xml</exclude>
+								<exclude>**/log4j.xml</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+					<!-- =============================================================== -->
+					<!-- SubPriceLogger  ============================================== -->
+					<!-- =============================================================== -->
+					<execution>
+						<id>SubPriceLogger</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<finalName>SubPriceLogger</finalName>
+							<archive>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<classpathPrefix>./lib/</classpathPrefix>
+									<mainClass>
+										kr.co.steamsale.backend.log.subPrice.SubPriceLogger
+									</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Class-Path>./</Class-Path>
+								</manifestEntries>
+							</archive>
+							<excludes>
+								<exclude>**/app-config.xml</exclude>
+								<exclude>**/log4j.xml</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2-beta-5</version>
+				<configuration>
+					<finalName>STEAMSALE_Deploy</finalName>
+					<descriptors>
+						<descriptor>${basedir}/src/main/assembly/inst.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+</project>
